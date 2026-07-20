@@ -1,0 +1,19 @@
+package com.fadymarty.todo.user;
+
+import com.fadymarty.todo.user.request.ChangePasswordRequest;
+import com.fadymarty.todo.user.request.ProfileUpdateRequest;
+import org.springframework.security.core.userdetails.UserDetailsService;
+
+public interface UserService extends UserDetailsService {
+
+    void updateProfileInfo(ProfileUpdateRequest request, String userId);
+
+    void changePassword(ChangePasswordRequest request, String userId);
+
+    void deactivateAccount(String userId);
+
+    void reactiveAccount(String userId);
+
+    void deleteAccount(String userId);
+
+}
