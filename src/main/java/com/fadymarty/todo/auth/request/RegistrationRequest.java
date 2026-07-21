@@ -14,47 +14,48 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class RegistrationRequest {
-    @NotBlank(message = "VALIDATION.REGISTRATION.FIRSTNAME.NOT_BLANK")
+
+    @NotBlank(message = "VALIDATION.REGISTRATION.FIRST_NAME.BLANK")
     @Size(
             min = 1,
             max = 50,
-            message = "VALIDATION.REGISTRATION.FIRSTNAME.SIZE"
+            message = "VALIDATION.REGISTRATION.FIRST_NAME.SIZE"
     )
     @Pattern(
             regexp = "^[\\p{L} '-]+$",
-            message = "VALIDATION.REGISTRATION.FIRSTNAME.PATTERN"
+            message = "VALIDATION.REGISTRATION.FIRST_NAME.PATTERN"
     )
     @Schema(example = "John")
-    private String firstName;
+    String firstName;
 
-    @NotBlank(message = "VALIDATION.REGISTRATION.LASTNAME.NOT_BLANK")
+    @NotBlank(message = "VALIDATION.REGISTRATION.LAST_NAME.BLANK")
     @Size(
             min = 1,
             max = 50,
-            message = "VALIDATION.REGISTRATION.LASTNAME.SIZE"
+            message = "VALIDATION.REGISTRATION.LAST_NAME.SIZE"
     )
     @Pattern(
             regexp = "^[\\p{L} '-]+$",
-            message = "VALIDATION.REGISTRATION.LASTNAME.PATTERN"
+            message = "VALIDATION.REGISTRATION.LAST_NAME.PATTERN"
     )
-    @Schema(example = "John")
-    private String lastName;
+    @Schema(example = "Doe")
+    String lastName;
 
-    @NotBlank(message = "VALIDATION.REGISTRATION.EMAIL.NOT_BLANK")
+    @NotBlank(message = "VALIDATION.REGISTRATION.EMAIL.BLANK")
     @Email(message = "VALIDATION.REGISTRATION.EMAIL.FORMAT")
     @NonDisposableEmail(message = "VALIDATION.REGISTRATION.EMAIL.DISPOSABLE")
     @Schema(example = "john.doe@example.com")
-    private String email;
+    String email;
 
-    @NotBlank(message = "VALIDATION.REGISTRATION.PHONE.NOT_BLANK")
+    @NotBlank(message = "VALIDATION.REGISTRATION.PHONE.BLANK")
     @Pattern(
-            regexp = "^\\+?[0-9]{10,13}$",
+            regexp = "^\\+?[1-9]\\d{1,14}$",
             message = "VALIDATION.REGISTRATION.PHONE.FORMAT"
     )
-    @Schema(example = "+923344556677")
-    private String phoneNumber;
+    @Schema(example = "+4912389765634")
+    String phoneNumber;
 
-    @NotBlank(message = "VALIDATION.REGISTRATION.PASSWORD.NOT_BLANK")
+    @NotBlank(message = "VALIDATION.REGISTRATION.PASSWORD.BLANK")
     @Size(
             min = 8,
             max = 72,
@@ -64,15 +65,15 @@ public class RegistrationRequest {
             regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*\\W).*$",
             message = "VALIDATION.REGISTRATION.PASSWORD.WEAK"
     )
-    @Schema(example = "<PASSWORD>")
-    private String password;
+    @Schema(example = "pAssword1!_")
+    String password;
 
-    @NotBlank(message = "VALIDATION.REGISTRATION.CONFIRM_PASSWORD.NOT_BLANK")
+    @NotBlank(message = "VALIDATION.REGISTRATION.CONFIRM_PASSWORD.BLANK")
     @Size(
             min = 8,
             max = 72,
             message = "VALIDATION.REGISTRATION.CONFIRM_PASSWORD.SIZE"
     )
-    @Schema(example = "<PASSWORD>")
-    private String confirmPassword;
+    @Schema(example = "pAssword1!_")
+    String confirmPassword;
 }

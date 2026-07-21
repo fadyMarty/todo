@@ -1,6 +1,7 @@
 package com.fadymarty.todo.user;
 
 import com.fadymarty.todo.role.Role;
+import com.fadymarty.todo.todo.Todo;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -18,6 +19,7 @@ import java.util.List;
 
 import static jakarta.persistence.GenerationType.UUID;
 
+
 @Entity
 @Getter
 @Setter
@@ -31,47 +33,33 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = UUID)
     private String id;
-
     @Column(name = "FIRST_NAME", nullable = false)
     private String firstName;
-
     @Column(name = "LAST_NAME", nullable = false)
     private String lastName;
-
-    @Column(name = "EMAIL", nullable = false, unique = true)
+    @Column(name = "EMAIL", unique = true, nullable = false)
     private String email;
-
-    @Column(name = "PHONE_NUMBER", nullable = false, unique = true)
+    @Column(name = "PHONE_NUMBER", unique = true, nullable = false)
     private String phoneNumber;
-
     @Column(name = "PASSWORD", nullable = false)
     private String password;
-
     @Column(name = "DATE_OF_BIRTH")
     private LocalDate dateOfBirth;
-
     @Column(name = "IS_ENABLED")
     private boolean enabled;
-
     @Column(name = "IS_ACCOUNT_LOCKED")
     private boolean locked;
-
-    @Column(name = "IS_CREDENTIAL_EXPIRED")
-    private boolean expired;
-
+    @Column(name = "IS_CRENDETIAL_EXPIRED")
+    private boolean credentialsExpired;
     @Column(name = "IS_EMAIL_VERIFIED")
     private boolean emailVerified;
-
+    @Column(name = "PROFILE_PICTURE_URL")
+    private String profilePictureUrl;
     @Column(name = "IS_PHONE_VERIFIED")
     private boolean phoneVerified;
-
-    @Column(name = "CREDENTIALS_EXPIRED")
-    private boolean credentialsExpired;
-
     @CreatedDate
     @Column(name = "CREATED_DATE", updatable = false, nullable = false)
     private LocalDateTime createdDate;
-
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE", insertable = false)
     private LocalDateTime lastModifiedDate;
@@ -83,13 +71,26 @@ public class User implements UserDetails {
     @JoinTable(
             name = "USERS_ROLES",
             joinColumns = {
-                    @JoinColumn(name = "USER_ID")
+                    @JoinColumn(name = "users_id")
             },
             inverseJoinColumns = {
-                    @JoinColumn(name = "ROLE_ID")
+                    @JoinColumn(name = "roles_id")
             }
     )
     private List<Role> roles;
+
+    @OneToMany(mappedBy = "user")
+    private List<Todo> todos;
+
+    public void addRole(Role role) {
+        roles.add(role);
+        role.getUsers().add(this);
+    }
+
+    public void removeRole(Role role) {
+        roles.remove(role);
+        role.getUsers().remove(this);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -97,13 +98,18 @@ public class User implements UserDetails {
             return List.of();
         }
         return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .map(r -> new SimpleGrantedAuthority(r.getName()))
                 .toList();
     }
 
     @Override
     public String getUsername() {
         return email;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @Override
@@ -124,5 +130,9 @@ public class User implements UserDetails {
     @Override
     public boolean isCredentialsNonExpired() {
         return !credentialsExpired;
+    }
+
+    public String getFullName() {
+        return firstName + " " + lastName;
     }
 }

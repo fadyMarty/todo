@@ -15,47 +15,48 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "User", description = "User API")
 public class UserController {
 
-    private final UserService userService;
+    private final UserService service;
 
     @PatchMapping("/me")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public void updateProfileInfo(
+    public void updateProfile(
             @RequestBody
-            @Valid final ProfileUpdateRequest request,
-            final Authentication principal
+            @Valid
+            ProfileUpdateRequest request,
+            Authentication principal
     ) {
-        userService.updateProfileInfo(request, getUserId(principal));
+        service.updateProfileInfo(request, getUserId(principal));
     }
 
     @PostMapping("/me/password")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void changePassword(
             @RequestBody
-            @Valid final ChangePasswordRequest request,
-            final Authentication principal
-    ) {
-        userService.changePassword(request, getUserId(principal));
+            @Valid
+            ChangePasswordRequest request,
+            Authentication principal) {
+        service.changePassword(request, getUserId(principal));
     }
 
     @PatchMapping("/me/deactivate")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deactivateAccount(final Authentication principal) {
-        userService.deactivateAccount(getUserId(principal));
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void deactivateAccount(Authentication principal) {
+        service.deactivateAccount(getUserId(principal));
     }
 
     @PatchMapping("/me/reactivate")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void reactivateAccount(final Authentication principal) {
-        userService.reactiveAccount(getUserId(principal));
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void reactivateAccount(Authentication principal) {
+        service.reactivateAccount(getUserId(principal));
     }
 
     @DeleteMapping("/me")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAccount(final Authentication principal) {
-        userService.deleteAccount(getUserId(principal));
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void deleteAccount(Authentication principal) {
+        service.deleteAccount(getUserId(principal));
     }
 
-    private String getUserId(Authentication principal) {
-        return ((User) principal.getPrincipal()).getId();
+    private String getUserId(Authentication authentication) {
+        return ((User) authentication.getPrincipal()).getId();
     }
 }

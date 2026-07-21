@@ -11,5 +11,5 @@ public interface AuthenticationService {
 
     void register(RegistrationRequest request);
 
-    AuthenticationResponse refreshToken(RefreshRequest request);
+    AuthenticationResponse refreshToken(RefreshRequest req);
 }

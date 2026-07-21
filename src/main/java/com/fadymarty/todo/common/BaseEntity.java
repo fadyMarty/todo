@@ -19,9 +19,9 @@ import static jakarta.persistence.GenerationType.UUID;
 @MappedSuperclass
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
 

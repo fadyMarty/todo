@@ -11,15 +11,15 @@ import java.util.List;
 @ToString
 public class ErrorResponse {
 
-    private String message;
+    String message;
     private String code;
     private List<ValidationError> validationErrors;
 
     @Getter
+    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    @ToString
     public static class ValidationError {
         private String field;
         private String code;

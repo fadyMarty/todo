@@ -18,32 +18,34 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 @Tag(name = "Authentication", description = "Authentication API")
-public class AuthController {
+public class AuthenticationController {
 
-    private final AuthenticationService authenticationService;
+    private final AuthenticationService service;
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(
             @Valid
-            @RequestBody final AuthenticationRequest request
+            @RequestBody
+            AuthenticationRequest request
     ) {
-        return ResponseEntity.ok(authenticationService.login(request));
+        return ResponseEntity.ok(service.login(request));
     }
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(
             @Valid
-            @RequestBody final RegistrationRequest request
+            @RequestBody
+            RegistrationRequest request
     ) {
-        authenticationService.register(request);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .build();
+        service.register(request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<AuthenticationResponse> refresh(
-            @RequestBody final RefreshRequest request
+            @RequestBody
+            RefreshRequest req
     ) {
-        return ResponseEntity.ok(authenticationService.refreshToken(request));
+        return ResponseEntity.ok(service.refreshToken(req));
     }
 }

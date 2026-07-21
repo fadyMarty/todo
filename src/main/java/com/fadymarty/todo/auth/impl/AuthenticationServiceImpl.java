@@ -6,7 +6,6 @@ import com.fadymarty.todo.auth.request.RefreshRequest;
 import com.fadymarty.todo.auth.request.RegistrationRequest;
 import com.fadymarty.todo.auth.response.AuthenticationResponse;
 import com.fadymarty.todo.exception.BusinessException;
-import com.fadymarty.todo.exception.ErrorCode;
 import com.fadymarty.todo.role.Role;
 import com.fadymarty.todo.role.RoleRepository;
 import com.fadymarty.todo.security.JwtService;
@@ -25,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.fadymarty.todo.exception.ErrorCode.*;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -38,18 +39,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse login(AuthenticationRequest request) {
-        final Authentication auth = authenticationManager.authenticate(
+        Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
-
-        final User user = (User) auth.getPrincipal();
-        final String token = jwtService.generateAccessToken(user.getUsername());
-        final String refreshToken = jwtService.refreshAccessToken(user.getUsername());
-        final String tokenType = "Bearer";
-
+        User user = (User) auth.getPrincipal();
+        String token = jwtService.generateAccessToken(user.getUsername());
+        String refreshToken = jwtService.generateRefreshToken(user.getUsername());
+        String tokenType = "Bearer";
         return AuthenticationResponse.builder()
                 .accessToken(token)
                 .refreshToken(refreshToken)
@@ -64,17 +63,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         checkUserPhoneNumber(request.getPhoneNumber());
         checkPasswords(request.getPassword(), request.getConfirmPassword());
 
-        final Role userRole = roleRepository.findByName("ROLE_USER")
-                .orElseThrow(() -> new EntityNotFoundException("Role user does not exists"));
-        final List<Role> roles = new ArrayList<>();
+        Role userRole = roleRepository.findByName("ROLE_USER")
+                .orElseThrow(() -> new EntityNotFoundException("Role user does not exist"));
+        List<Role> roles = new ArrayList<>();
         roles.add(userRole);
 
-        final User user = userMapper.toUser(request);
+        User user = userMapper.toUser(request);
         user.setRoles(roles);
         log.debug("Saving user {}", user);
         userRepository.save(user);
 
-        final List<User> users = new ArrayList<>();
+        List<User> users = new ArrayList<>();
         users.add(user);
         userRole.setUsers(users);
 
@@ -82,33 +81,36 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public AuthenticationResponse refreshToken(RefreshRequest request) {
-        final String newAccessToken = jwtService.refreshAccessToken(request.getRefreshToken());
-        final String tokenType = "Bearer";
+    public AuthenticationResponse refreshToken(RefreshRequest req) {
+        String newAccessToken = jwtService.refreshAccessToken(req.getRefreshToken());
+        String tokenType = "Bearer";
         return AuthenticationResponse.builder()
                 .accessToken(newAccessToken)
-                .refreshToken(request.getRefreshToken())
+                .refreshToken(req.getRefreshToken())
                 .tokenType(tokenType)
                 .build();
     }
 
     private void checkUserEmail(String email) {
-        final boolean emailExists = userRepository.existsByEmailIgnoreCase(email);
+        boolean emailExists = userRepository.existsByEmailIgnoreCase(email);
         if (emailExists) {
-            throw new BusinessException(ErrorCode.EMAIL_ALREADY_EXISTS);
+            throw new BusinessException(EMAIL_ALREADY_EXISTS);
+        }
+    }
+
+    private void checkPasswords(
+            String password,
+            String confirmPassword
+    ) {
+        if (password == null || !password.equals(confirmPassword)) {
+            throw new BusinessException(PASSWORD_MISMATCH);
         }
     }
 
     private void checkUserPhoneNumber(String phoneNumber) {
-        final boolean phoneNumberExists = userRepository.existsByPhoneNumber(phoneNumber);
+        boolean phoneNumberExists = userRepository.existsByPhoneNumber(phoneNumber);
         if (phoneNumberExists) {
-            throw new BusinessException(ErrorCode.PHONE_ALREADY_EXISTS);
-        }
-    }
-
-    private void checkPasswords(String password, String confirmPassword) {
-        if (password == null || !password.equals(confirmPassword)) {
-            throw new BusinessException(ErrorCode.PASSWORD_MISMATCH);
+            throw new BusinessException(PHONE_ALREADY_EXISTS);
         }
     }
 }

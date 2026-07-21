@@ -9,15 +9,16 @@ import com.fadymarty.todo.user.UserService;
 import com.fadymarty.todo.user.request.ChangePasswordRequest;
 import com.fadymarty.todo.user.request.ProfileUpdateRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import static com.fadymarty.todo.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -25,64 +26,69 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
         return userRepository.findByEmailIgnoreCase(userEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with userEmail: " + userEmail));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + userEmail));
     }
 
     @Override
     public void updateProfileInfo(ProfileUpdateRequest request, String userId) {
-        final User savedUser = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND, userId));
+        User savedUser = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
         userMapper.mergeUserInfo(savedUser, request);
         userRepository.save(savedUser);
     }
 
     @Override
-    public void changePassword(ChangePasswordRequest request, String userId) {
-        if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
-            throw new BusinessException(ErrorCode.CHANGE_PASSWORD_MISMATCH);
+    public void changePassword(ChangePasswordRequest req, String userId) {
+
+        if (!req.getNewPassword().equals(req.getConfirmNewPassword())) {
+            throw new BusinessException(CHANGE_PASSWORD_MISMATCH);
         }
 
-        final User savedUser = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND, userId));
+        User savedUser = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
-        if (!passwordEncoder.matches(request.getCurrentPassword(),
-                savedUser.getPassword())) {
-            throw new BusinessException(ErrorCode.INVALID_CURRENT_PASSWORD);
+        if (!passwordEncoder.matches(req.getCurrentPassword(), savedUser.getPassword())) {
+            throw new BusinessException(INVALID_CURRENT_PASSWORD);
         }
 
-        final String encoded = passwordEncoder.encode(request.getNewPassword());
+        String encoded = passwordEncoder.encode(req.getNewPassword());
         savedUser.setPassword(encoded);
         userRepository.save(savedUser);
     }
 
     @Override
     public void deactivateAccount(String userId) {
-        final User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND, userId));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
         if (!user.isEnabled()) {
             throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_DEACTIVATED);
         }
+
         user.setEnabled(false);
         userRepository.save(user);
     }
 
     @Override
-    public void reactiveAccount(String userId) {
-        final User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND, userId));
+    public void reactivateAccount(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
         if (user.isEnabled()) {
             throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_DEACTIVATED);
         }
+
         user.setEnabled(true);
         userRepository.save(user);
     }
 
     @Override
     public void deleteAccount(String userId) {
+
     }
 }

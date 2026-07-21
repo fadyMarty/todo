@@ -17,11 +17,11 @@ public class TodoApplication {
     }
 
     @Bean
-    public CommandLineRunner commandLineRunner(final RoleRepository roleRepository) {
+    public CommandLineRunner commandLineRunner(RoleRepository roleRepository) {
         return args -> {
-            final Optional<Role> userRole = roleRepository.findByName("ROLE_USER");
+            Optional<Role> userRole = roleRepository.findByName("ROLE_USER");
             if (userRole.isEmpty()) {
-                final Role role = new Role();
+                Role role = new Role();
                 role.setName("ROLE_USER");
                 role.setCreatedBy("APP");
                 roleRepository.save(role);

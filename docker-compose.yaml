@@ -1,17 +1,16 @@
 services:
   postgres:
-    container_name: todo
+    container_name: todo-app
     image: postgres
     environment:
       POSTGRES_USER: username
       POSTGRES_PASSWORD: password
       PGDATA: /data/postgres
-      POSTGRES_DB: todo_db
+      POSTGRES_DB: todo_app_db
     volumes:
       - postgres:/data/postgres
     ports:
       - "5432:5432"
     restart: unless-stopped
-
 volumes:
   postgres:

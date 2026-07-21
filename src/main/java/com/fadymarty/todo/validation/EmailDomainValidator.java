@@ -13,7 +13,8 @@ public class EmailDomainValidator implements ConstraintValidator<NonDisposableEm
     private final Set<String> blocked;
 
     public EmailDomainValidator(
-            @Value("${app.security.disposable-email}") final List<String> domains
+            @Value("${app.security.disposable-email}")
+            List<String> domains
     ) {
         blocked = domains.stream()
                 .map(String::toLowerCase)
@@ -21,13 +22,13 @@ public class EmailDomainValidator implements ConstraintValidator<NonDisposableEm
     }
 
     @Override
-    public boolean isValid(String email, ConstraintValidatorContext context) {
+    public boolean isValid(String email, ConstraintValidatorContext ctx) {
         if (email == null || !email.contains("@")) {
             return true;
         }
-        final int index = email.indexOf("@") + 1;
-        final int dotIndex = email.lastIndexOf(".");
-        final String domain = email.substring(index, dotIndex);
+        int atIndex = email.lastIndexOf('@') + 1;
+        int dotIndex = email.lastIndexOf('.');
+        String domain = email.substring(atIndex, dotIndex).toLowerCase();
         return !blocked.contains(domain);
     }
 }

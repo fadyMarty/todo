@@ -6,11 +6,10 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class ProfileUpdateRequest {
-
     private String firstName;
     private String lastName;
     private LocalDate dateOfBirth;

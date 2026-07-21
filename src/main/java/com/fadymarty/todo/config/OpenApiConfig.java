@@ -13,26 +13,26 @@ import io.swagger.v3.oas.annotations.servers.Server;
 @OpenAPIDefinition(
         info = @Info(
                 contact = @Contact(
-                        name = "Todo",
+                        name = "Todo Demo",
                         email = "john.doe@example.com",
                         url = "https://example.com"
                 ),
-                description = "OpenApi documentation for Todo project",
-                title = "OpenAPI specification",
+                description = "OpenApi documentation for Todo App",
+                title = "OpenApi specification",
                 version = "1.0",
                 license = @License(
-                        name = "License",
+                        name = "Licence name",
                         url = "https://example.com"
                 ),
-                termsOfService = "https://example.com"
+                termsOfService = "Terms of service"
         ),
         servers = {
                 @Server(
-                        url = "http://localhost:8080",
-                        description = "Local ENV"
+                        description = "Local ENV",
+                        url = "http://localhost:8080"
                 ),
                 @Server(
-                        description = "Prod ENV",
+                        description = "PROD ENV",
                         url = "http://localhost:8080"
                 )
         },
