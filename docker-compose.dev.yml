@@ -6,7 +6,7 @@ services:
     environment:
       - DB_URL=todo-db
       - DB_PORT=5432
-      - DB_NAME=${PG_DB_DB_NAME}
+      - DB_NAME=${PG_DB_NAME}
       - DB_USERNAME=${PG_DB_USERNAME}
       - DB_PASSWORD=${PG_DB_PASSWORD}
     ports:
@@ -21,7 +21,7 @@ services:
     environment:
       POSTGRES_USER: ${PG_DB_USERNAME}
       POSTGRES_PASSWORD: ${PG_DB_PASSWORD}
-      POSTGRES_DB: ${PG_DB_DB_NAME}
+      POSTGRES_DB: ${PG_DB_NAME}
       PGDATA: /data/postgres
     volumes:
       - postgres:/data/postgres
