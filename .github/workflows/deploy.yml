@@ -125,7 +125,7 @@ jobs:
             
             rm docker-compose.dev.yml
             if [ ! -f docker-compose.dev.yml ]; then
-              curl -o docker-compose.dev.yml https://raw.githubusercontent.com/fadyMarty/todo/refs/heads/main/docker-compose.dev.yaml
+              curl -o docker-compose.dev.yml https://raw.githubusercontent.com/fadyMarty/todo/refs/heads/main/docker-compose.dev.yml
             fi
             
             # Pull latest image
