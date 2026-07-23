@@ -117,7 +117,7 @@ jobs:
             cat > .env << EOF
             DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
             APP_NAME=${{ env.APP_NAME }}
-            DB_URL=todo-app
+            DB_URL=todo-db
             PG_DB_NAME=${{secrets.PG_DB_NAME}}
             PG_DB_USERNAME=${{secrets.PG_DB_USERNAME}}
             PG_DB_PASSWORD=${{secrets.PG_DB_PASSWORD}}

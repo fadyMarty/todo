@@ -4,7 +4,7 @@ services:
     container_name: ${APP_NAME}
     restart: unless-stopped
     environment:
-      - DB_URL=todo-app
+      - DB_URL=todo-db
       - DB_PORT=5432
       - DB_NAME=${PG_DB_DB_NAME}
       - DB_USERNAME=${PG_DB_USERNAME}
@@ -16,7 +16,7 @@ services:
 
   db:
     image: postgres
-    container_name: todo-app
+    container_name: todo-db
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${PG_DB_USERNAME}
